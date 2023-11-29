@@ -28,6 +28,7 @@ import os
 import logging
 from decimal import Decimal
 from unittest import TestCase
+from urllib.parse import quote_plus
 from service import app
 from service.common import status
 from service.models import db, init_db, Product
@@ -187,7 +188,7 @@ class TestProductRoutes(TestCase):
     def test_update_product(self):
         """It should Update an existing Product"""
 
-        # create a product and verify that was created by its status code               
+        # create a product and verify that was created by its status code
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -197,7 +198,7 @@ class TestProductRoutes(TestCase):
         new_product['description'] = 'New description test'
         response = self.client.put(f'{BASE_URL}/{new_product["id"]}', json=new_product)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         updated_product = response.get_json()
         self.assertEqual(updated_product['description'], 'New description test')
 
@@ -212,7 +213,7 @@ class TestProductRoutes(TestCase):
 
     def test_delete_product(self):
         """It should Delete a Product"""
-        
+
         products = self._create_products(5)
         initial_count = self.get_product_count()
         test_product = products[0]
@@ -265,7 +266,7 @@ class TestProductRoutes(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), category_count)
         for product in data:
-            self.assertEqual(product['category'], test_category)
+            self.assertEqual(product['category'], test_category.name)
 
     ######################################################################
     # Utility functions
