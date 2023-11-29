@@ -40,6 +40,8 @@ DATABASE_URI = os.getenv(
 #  P R O D U C T   M O D E L   T E S T   C A S E S
 ######################################################################
 # pylint: disable=too-many-public-methods
+# pylint: disable=broad-except
+
 class TestProductModel(unittest.TestCase):
     """Test Cases for Product Model"""
 
@@ -151,11 +153,11 @@ class TestProductModel(unittest.TestCase):
         product.create()
         product.id = None
         self.assertEqual(product.id, None)
-        
+
         try:
             product.update()
-        except Exception as e:
-            self.assertEqual(str(e), 'Update called with empty ID field')
+        except Exception as err:
+            self.assertEqual(str(err), 'Update called with empty ID field')
 
     def test_delete_a_product(self):
         """It should delete a product"""
