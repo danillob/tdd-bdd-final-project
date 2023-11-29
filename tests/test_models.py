@@ -143,6 +143,20 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(products[0].id, id_before)
         self.assertEqual(products[0].description, 'New description for testing')
 
+    def test_update_a_product_invalid_data(self):
+        """It should not update a product - Id missing"""
+
+        product = ProductFactory()
+        logging.info('Product created: %s', product)
+        product.create()
+        product.id = None
+        self.assertEqual(product.id, None)
+        
+        try:
+            product.update()
+        except Exception as e:
+            self.assertEqual(str(e), 'Update called with empty ID field')
+
     def test_delete_a_product(self):
         """It should delete a product"""
 
@@ -234,3 +248,24 @@ class TestProductModel(unittest.TestCase):
 
         for prod in category_products:
             self.assertEqual(prod.category, first_category)
+
+    def test_find_a_product_by_price(self):
+        """It should find and return a product by its price"""
+
+        products = ProductFactory.create_batch(10)
+        for product in products:
+            product.create()
+
+        first_price = products[0].price
+
+        count_price = 0
+        for prod in products:
+            if prod.price == first_price:
+                count_price += 1
+
+        price_products = Product.find_by_price(first_price)
+
+        self.assertEqual(price_products.count(), count_price)
+
+        for prod in price_products:
+            self.assertEqual(prod.price, first_price)
