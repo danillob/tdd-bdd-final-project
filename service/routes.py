@@ -89,8 +89,7 @@ def create_products():
     #
     # Uncomment this line of code once you implement READ A PRODUCT
     #
-    # location_url = url_for("get_products", product_id=product.id, _external=True)
-    location_url = "/"  # delete once READ is implemented
+    location_url = url_for("get_products", product_id=product.id, _external=True)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
@@ -106,12 +105,16 @@ def list_products():
     products = []
     name = request.args.get('name')
     category = request.args.get("category")
+    available = request.args.get("available")
 
     if name:
         products = Product.find_by_name(name)
     elif category:
         category_value = getattr(Category, category.upper())
         products = Product.find_by_category(category_value)
+    elif available:
+        available = bool(available)
+        products = Product.find_by_availability(available)
     else:
         products = Product.all()
 
